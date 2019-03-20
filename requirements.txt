@@ -1,0 +1,5 @@
+pytest
+slackclient
+python-dotenv
+celery
+pika
