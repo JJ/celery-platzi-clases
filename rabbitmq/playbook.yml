@@ -1,0 +1,54 @@
+---
+- hosts: all
+  tasks:
+    - name: Añade llaves
+      become: yes
+      apt_key:
+        keyserver: hkps.pool.sks-keyservers.net
+        id: "0x6B73A36E6026DFCA"
+
+    - name: Actualiza transporte
+      become: yes
+      package:
+        name: apt-transport-https
+        state: present
+
+    - name: Añade repo Erlang
+      become: yes
+      apt_repository:
+        repo: deb https://dl.bintray.com/rabbitmq-erlang/debian bionic erlang
+        state: present
+
+    - name: Añade Erlang
+      become: yes
+      package:
+        name: erlang-nox
+        state: present
+        update_cache: yes
+
+    - name: Añade repo Rabbitmq
+      become: yes
+      apt_repository:
+        repo: deb https://dl.bintray.com/rabbitmq/debian bionic main
+        state: present
+
+    - name: Añade Rabbitmq
+      become: yes
+      package:
+        name: rabbitmq-server
+        state: present
+        update_cache: yes
+
+    - name: Descarga get-pip.py
+      get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+
+    - name: Instala pip
+      become: yes
+      command: "python get-pip.py pip==19.0"
+      args:
+        chdir: /tmp
+
+    - name: Instala Celery
+      become: yes
+      pip:
+        name: celery
